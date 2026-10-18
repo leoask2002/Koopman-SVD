@@ -263,16 +263,20 @@ class NestedLoRA(nn.Module):
             importance=None,
             evd: bool = True,
     ):
+        """Evaluate legacy self-adjoint operator objectives.
+
+        General Koopman identification requires separate source and target
+        functions and paired observations; a state transition is not an
+        operator action on the learned observable.
         """
-        Extended to support Koopman-based dynamics using the KoopmanOperator.
-        """
+        if isinstance(operator, KoopmanOperator):
+            raise NotImplementedError(
+                "The legacy self-adjoint EVD objective does not support a general "
+                "Koopman state transition. Use koopman_svd.NeuralKoopmanSVD.fit(x, y) "
+                "with aligned source/target observations and separate singular functions."
+            )
         if evd:
-            # Apply KoopmanOperator if available
-            if isinstance(operator, KoopmanOperator):
-                Tf = operator(x)  # Koopman-transformed state
-            else:
-                Tf, f = operator(self, x, importance=importance)
-            
+            Tf, f = operator(self, x, importance=importance)
             f1, f2 = torch.chunk(f, 2)
             loss = self._compute_loss(f, Tf, f1, f2, evd=True)
             return loss, dict(f=f, Tf=Tf, eigvals=None)
