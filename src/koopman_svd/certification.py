@@ -210,3 +210,87 @@ def select_horizon(certificate: RiskCertificate, *, ranks, tolerance: float) -> 
     eligible = np.flatnonzero(prefix == longest)
     best = int(eligible[np.argmin(ranks[eligible])])
     return Selection(best, int(ranks[best]), longest)
+
+
+def cap_forecast(baseline, proposal, *, cap: float, bounds):
+    """Deploy a bounded proposal allowed to move at most cap from its baseline.
+
+    The cap is a model design choice, not a calibration-sample maximum.
+    """
+    a, b = map(float, bounds)
+    if not np.isfinite([a, b, b-a, cap]).all() or not (a < b and 0 <= cap <= b-a):
+        raise ValueError("require finite increasing bounds and cap in [0, b-a]")
+    base, q = np.asarray(baseline, dtype=float), np.asarray(proposal, dtype=float)
+    if base.shape != q.shape or not (np.isfinite(base).all() and np.isfinite(q).all()):
+        raise ValueError("baseline and proposal must be equally shaped finite arrays")
+    base, q = np.clip(base, a, b), np.clip(q, a, b)
+    return np.clip(base + np.clip(q-base, -cap, cap), a, b)
+
+
+def certify_capped_updates(proposals, outcomes, *, baseline_forecast, caps, bounds,
+                           delta=0.05, method="empirical_bernstein") -> ImprovementCertificate:
+    """Certify the gain of bounded updates on arbitrary state spaces.
+
+    Each frozen proposal j has shape (horizons, independent starts) and a
+    prespecified scalar cap in observable units. The certificate covers the
+    predictions made by cap_forecast, not the raw proposals. Row 0 is the
+    baseline; subsequent rows match proposals. No finite support is assumed.
+    """
+    p, y, a, b = _samples(proposals, outcomes, bounds, delta)
+    caps = np.asarray(caps, dtype=float)
+    if caps.shape != (len(p),):
+        raise ValueError("specify one scalar cap per proposal")
+    base = np.asarray(baseline_forecast, dtype=float)
+    candidates = np.stack([cap_forecast(base, row, cap=c, bounds=(a, b))
+                           for row, c in zip(p, caps)])
+    width = b-a
+    base = np.clip(base, a, b)
+    gain = ((base-y)/width)**2 - ((candidates-y)/width)**2
+    scaled_cap = caps[:, None] / width
+    # At a given output y, residual magnitudes are at most 1 and
+    # differ by at most scaled_cap. The extrema are attained at endpoints.
+    diameter = np.minimum(2., np.nextafter(2*scaled_cap*(2-scaled_cap), np.inf))
+    mean = gain.mean(axis=-1)
+    radius = _radius(gain, diameter=diameter, count=mean.size, delta=delta, method=method)
+    zeros = np.zeros((1, p.shape[1]))
+    return ImprovementCertificate(
+        estimate=np.vstack((zeros, mean*width**2)),
+        lower=np.vstack((zeros, np.maximum(-1., mean-radius)*width**2)),
+        baseline=0, n_starts=p.shape[-1], delta=float(delta), bounds=(a, b), method=method,
+    )
+
+
+@dataclass(frozen=True)
+class ThresholdCertificate:
+    """Per-cell evidence against risk >= tolerance squared; not a risk estimate."""
+
+    accepted: np.ndarray
+    log_e_value: np.ndarray
+    tolerance: float
+    delta: float
+
+
+def certify_rmse_threshold(predictions, outcomes, replicas=None, *, bounds,
+                           tolerance: float, delta=0.05) -> ThresholdCertificate:
+    """Test one prespecified tolerance with a fixed mixture of five bets.
+
+    Same frozen-family, independent-start, bounded/clipped-predictor contract as
+    certify_forecasts. The fixed endpoint threshold is part of the hypothesis;
+    this function does not return an upper confidence interval for all tolerances.
+    """
+    p, y, a, b = _samples(predictions, outcomes, bounds, delta)
+    width = b-a
+    if not np.isfinite(tolerance) or not (0 < tolerance < width):
+        raise ValueError("tolerance must be strictly between zero and observable range")
+    z = y if replicas is None else np.asarray(replicas, dtype=float)
+    if z.shape != y.shape or not np.isfinite(z).all() or np.any((z < a) | (z > b)):
+        raise ValueError("replicas must match outcomes and lie in the declared range")
+    tau = (tolerance/width)**2
+    if tau >= 1:  # cannot form positive capital factors at a rounded endpoint
+        raise ValueError("normalized risk threshold must be distinguishable from one")
+    score = ((p-y)/width) * ((p-z)/width)
+    fractions = (.05, .15, .35, .60, .90)
+    log_capitals = [np.log1p(f*(tau-score)/(1-tau)).sum(axis=-1) for f in fractions]
+    log_e = np.logaddexp.reduce(np.stack(log_capitals), axis=0) - np.log(len(fractions))
+    return ThresholdCertificate(log_e >= np.log(log_e.size)-np.log(delta), log_e,
+                                tolerance=float(tolerance), delta=float(delta))

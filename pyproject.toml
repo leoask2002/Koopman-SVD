@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "koopman-neuralsvd"
-version = "0.3.0"
+version = "0.4.0"
 description = "Paired-data neural singular-function learning for Koopman operators"
 readme = "README.md"
 requires-python = ">=3.10"

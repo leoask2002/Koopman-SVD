@@ -32,6 +32,8 @@ It includes a two-sided singular-function estimator for time-varying laws, a bou
 risk certificate with rank and horizon selection, and separate experiments that isolate learning,
 pooling, and composition effects. Its risk bounds are for a specified observable and start law.
 
+The [held-out pendulum study](reports/pendulum/results.md) tests a stochastic physical simulation with changing damping, nonlinear sensors, partial observations and the [pinned official NeuralKoopmanSVD implementation](docs/pendulum-upstream.md). On two unseen schedules, time-smoothed EDMD reached six-step conditional-mean RMSE 0.1585 versus 0.4794 for our validation-selected neural model. The prespecified scale-up gate failed. [Continuous-state certification experiments](reports/pendulum/certificates.md) show which horizons could actually be accepted at the available budget.
+
 Additional bounded checks:
 
 ```bash

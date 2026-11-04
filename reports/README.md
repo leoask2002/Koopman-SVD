@@ -33,6 +33,21 @@ A [matched finite-support refinement](finite-support-selection/results.md) used 
 
 Left: three-step joint forward/reverse error across 30 fits. Right: post hoc sensitivity of the same simultaneous upper bounds on 30 fitted chain/circle families. With 4,096 calibration starts no model certified even one step at tolerance 0.15; all 30 certified all five at 0.30. An exact-risk oracle in the plotted menu often accepts far more than the finite-sample bound. Recreate the figure with `python scripts/plot_transport_results.py` after installing the plots extra. These experiments do not establish novelty, real-world transfer, or control guarantees.
 
+## Stochastic pendulum: finish the scale-up decision
+
+The [fixed protocol](pendulum/protocol.md) compared neural learning against matched frozen features, smoothed EDMD, direct regression and the actual upstream implementation. None saw held-out transition pairs while fitting. Five fit seeds, two unseen damping schedules and six forecast horizons were used. Full and angle-only observations have different conditional targets.
+
+| Question | Answer |
+|---|---|
+| Did learned features outperform classical identification? | **No** on the primary full-observation test. Six-step RMSE: learned 0.47935, frozen 0.46983, upstream family 0.46920, smoothed EDMD 0.15850. The smaller/faster representation failed the accuracy margin. [All candidate scores](pendulum/results.md) |
+| What if the pendulum structure is known? | A fit using calibrated sensors and the force-law form gave RMSE about 0.0053 in a [higher-resolution check](pendulum/mechanics.md). It has privileged structural information and is not a generic Koopman estimator. |
+| Did neural models handle a sensor change? | They beat the validation-selected classical model after changing five nuisance sensors, but stable-anchor harmonic EDMD was much better than either. With velocity unobserved the neural and classical errors were close. Neither stress result reverses the main decision. |
+| What did 4,096 starts buy? | The prespecified empirical Bernstein bound certified no learned steps at tolerance 0.15. On a smaller auxiliary menu a fixed-threshold betting test certified a mean 4.2 steps for the classical model, zero for the learned one. Capping updates sharpened some paired decisions; the bound covers only the capped forecast. [Proof](../docs/certification.md) · [Matched results](pendulum/certificates.md) |
+
+![Forecast accuracy and certified horizon on the stochastic pendulum](pendulum/comparison.svg)
+
+**Decision:** stop scaling this neural configuration. Use schedule-smoothed EDMD with stable observations or a mechanics-informed model where that prior is warranted. All evidence is simulation-specific. No hardware/controller or infinite-dimensional generator claim is made.
+
 ## What the comparisons establish
 
 - The rank-three Markov model improves over the same untrained neural dictionary: one-step error averages 48.69% ± 3.20% before learning versus 34.81% ± 1.24% afterward. Its truncation reference is about 33.55% ± 0.00%; retaining rank four removes most of this compression error.
