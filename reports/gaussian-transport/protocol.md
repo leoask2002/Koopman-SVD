@@ -1,0 +1,15 @@
+# Gaussian transport pilot: fixed design
+
+This protocol was recorded before computing the experiment results. It is a bounded synthetic pilot, not a registered confirmatory study.
+
+**Question.** Does sharing information across time help estimate finite-horizon affine conditional means when trajectories are scarce, without accidentally freezing the reverse transition when marginal distributions change?
+
+**Design.** Use 30 independent training/validation seeds (0–29), 2 coordinates, 9 transitions, 32 training and 96 validation trajectories per seed. Evaluate horizons 1, 3 and 6, all available time origins, both forward and reverse, for (i) stationary initial Gaussian and homogeneous dynamics, (ii) displaced/skewed initial Gaussian with the same homogeneous transitions, (iii) that displaced initial Gaussian with smoothly changing affine transitions. All have process noise. Select a single shrinkage weight from {0, .25, .5, .75, 1} on observed validation trajectories, minimizing pooled mean squared prediction loss across directions, origins and horizons (equal weights per horizon and direction). Fit only to training paths.
+
+**Primary endpoint.** Three-step root mean square conditional-mean error on the drifting system, averaged equally across coordinates, time origins and directions; mean of the per-seed RMSEs. Exact Gaussian integration measures population performance, without fitting or selecting on the reference. Compare to pooled forward with time-aware Bayes reversal, time-local fits, fixed half pooling and a validation choice between the two endpoints. Report paired mean differences with percentile bootstrap intervals over independent seeds (10,000 resamples, interpretation descriptive). Other systems, directions and horizons are secondary. No broad significance claim, tuning against final results, or large model training. The naive fixed-reverse baseline is a diagnostic, not the main competitor.
+
+**Mechanism and limits.** A fixed forward transition law does not imply a fixed conditional reverse law off stationarity. Cross-time pooling reduces estimation variance but induces bias under drift. Affine coordinate closure supplies a strong reference; this experiment alone cannot demonstrate a learned neural-feature advantage or a finite-sample certificate.
+
+## Secondary smoothness comparison
+
+After examining the primary contrasts and before running this secondary model, we specified a stronger smooth-drift baseline: for each time t, fit a forward affine Gaussian by weighted regression on neighboring *training times*, using Gaussian weights, with bandwidth chosen from {0, .5, 1, 2, infinity} by the same held-out validation loss. Zero and infinity give time-local and pooled limits. Run the same 30 paired seeds and score all regimes; the drifting h=3 comparison against adaptive scalar shrinkage is exploratory because the question was chosen after viewing its results. Temporal proximity is a structural assumption; the uniformly spaced, smoothly drifting benchmark favors it. No bandwidth or state law is tuned on exact reference errors.
