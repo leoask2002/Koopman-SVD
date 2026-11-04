@@ -1,0 +1,19 @@
+{
+  "seed": 24017,
+  "sampled_starts": 1024,
+  "schedule": "test_switch",
+  "horizon": 8,
+  "dt_macro": 0.25,
+  "substeps": 8,
+  "sigma": 0.36,
+  "sde_coupled_endpoint_cosine_rmse": {
+    "8_vs_16": 0.012894403761808402,
+    "16_vs_32": 0.006427426274201373,
+    "8_vs_32": 0.019227436916209217
+  },
+  "ode_endpoint_cosine_rmse_vs_RK4_128": {
+    "8": 0.02576615236163969,
+    "16": 0.012832650225974832,
+    "32": 0.00640346075623073
+  }
+}
