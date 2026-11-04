@@ -1,0 +1,324 @@
+{
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "train_val_test": [
+      640,
+      320,
+      4096
+    ],
+    "rank_including_constant": 2,
+    "nested_steps_per_model": 64,
+    "hidden": [
+      12
+    ],
+    "nuisance_positive_probabilities": [
+      0.25,
+      0.7,
+      0.4,
+      0.8
+    ],
+    "lambda": [
+      0.9,
+      -0.75,
+      0.85
+    ],
+    "triples_zero_indexed": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        0,
+        2,
+        3
+      ],
+      [
+        0,
+        1,
+        3
+      ]
+    ],
+    "prediction_start": 0,
+    "primary": "equal-weight arithmetic mean of the three absolute conditional-mean RMSEs; no trajectory noise added to truth"
+  },
+  "versions": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "torch": "2.15.0+cpu"
+  },
+  "runs": [
+    {
+      "seed": 0,
+      "conditional_mean_rmse": {
+        "full_table_edmd": [
+          0.07780035101007002,
+          0.08865814435767755,
+          0.10200996563608582
+        ],
+        "rank2_coordinates": [
+          0.4891467481563505,
+          0.4360306076822184,
+          0.423115133497921
+        ],
+        "rank2_onehot": [
+          0.08578863193474924,
+          0.07170093508553164,
+          0.08091215439913352
+        ],
+        "frozen_neural": [
+          0.8201851397240386,
+          0.6767283247199654,
+          0.5785331853099025
+        ],
+        "nested_neural": [
+          0.3629522744090006,
+          0.30688831270119366,
+          0.28836857090586654
+        ]
+      },
+      "checkpoints": {
+        "frozen_neural": [
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -0.9840942067298484,
+            "trained": false
+          },
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -1.0020312659328865,
+            "trained": false
+          },
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -0.9899213166715446,
+            "trained": false
+          }
+        ],
+        "nested_neural": [
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.2931990682682404,
+            "trained": true
+          },
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.210497763705289,
+            "trained": true
+          },
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.2754360723648897,
+            "trained": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 1,
+      "conditional_mean_rmse": {
+        "full_table_edmd": [
+          0.09141857032863507,
+          0.06376527410292737,
+          0.060448913369610606
+        ],
+        "rank2_coordinates": [
+          0.4825995269943223,
+          0.4094417956468014,
+          0.39030680022979775
+        ],
+        "rank2_onehot": [
+          0.09786984269783708,
+          0.08362348242379745,
+          0.08002788210871752
+        ],
+        "frozen_neural": [
+          0.8886989296889186,
+          0.6757012986036898,
+          0.5741853382234777
+        ],
+        "nested_neural": [
+          0.31014325407139676,
+          0.26067866449528504,
+          0.23285420360533415
+        ]
+      },
+      "checkpoints": {
+        "frozen_neural": [
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -1.002939528176836,
+            "trained": false
+          },
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -0.9953305276291831,
+            "trained": false
+          },
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -0.9887843633543909,
+            "trained": false
+          }
+        ],
+        "nested_neural": [
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.3588312658849784,
+            "trained": true
+          },
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.1861009374243179,
+            "trained": true
+          },
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.2476653724477629,
+            "trained": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 2,
+      "conditional_mean_rmse": {
+        "full_table_edmd": [
+          0.08394203655886877,
+          0.0794459882148398,
+          0.0725612947212177
+        ],
+        "rank2_coordinates": [
+          0.48067831040686443,
+          0.3960825848633816,
+          0.3882591451609034
+        ],
+        "rank2_onehot": [
+          0.08612370888712514,
+          0.08627734539406821,
+          0.07340605489873538
+        ],
+        "frozen_neural": [
+          0.8907302118571792,
+          0.6759633324499812,
+          0.5742714566083814
+        ],
+        "nested_neural": [
+          0.3049946635993731,
+          0.23862434170174657,
+          0.22638630674149846
+        ]
+      },
+      "checkpoints": {
+        "frozen_neural": [
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -0.989494741227807,
+            "trained": false
+          },
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -0.9994715340015163,
+            "trained": false
+          },
+          {
+            "steps_completed": 0,
+            "best_step": 0,
+            "best_validation_loss": -1.0054566934881126,
+            "trained": false
+          }
+        ],
+        "nested_neural": [
+          {
+            "steps_completed": 64,
+            "best_step": 56,
+            "best_validation_loss": -1.30233162650045,
+            "trained": true
+          },
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.2014771244437754,
+            "trained": true
+          },
+          {
+            "steps_completed": 64,
+            "best_step": 64,
+            "best_validation_loss": -1.2802018238879818,
+            "trained": true
+          }
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "full_table_edmd": {
+      "means_by_horizon": [
+        0.08438698596585796,
+        0.07728980222514824,
+        0.07834005790897138
+      ],
+      "mean_of_horizon_rmse": 0.08000561536665919,
+      "sd_of_seed_mean": 0.007253665549693823
+    },
+    "rank2_coordinates": {
+      "means_by_horizon": [
+        0.4841415285191791,
+        0.41385166273080043,
+        0.4005603596295407
+      ],
+      "mean_of_horizon_rmse": 0.43285118362650676,
+      "sd_of_seed_mean": 0.01195837567744592
+    },
+    "rank2_onehot": {
+      "means_by_horizon": [
+        0.0899273945065705,
+        0.0805339209677991,
+        0.07811536380219547
+      ],
+      "mean_of_horizon_rmse": 0.08285889309218836,
+      "sd_of_seed_mean": 0.003213173635158783
+    },
+    "frozen_neural": {
+      "means_by_horizon": [
+        0.8665380937567121,
+        0.6761309852578788,
+        0.5756633267139205
+      ],
+      "mean_of_horizon_rmse": 0.7061108019095039,
+      "sd_of_seed_mean": 0.010113454464045584
+    },
+    "nested_neural": {
+      "means_by_horizon": [
+        0.3260300640265901,
+        0.26873043963274174,
+        0.24920302708423306
+      ],
+      "mean_of_horizon_rmse": 0.2813211769145217,
+      "sd_of_seed_mean": 0.027315005205872024
+    }
+  }
+}

@@ -15,6 +15,24 @@ The implementation is operational and the mathematical direction has demonstrabl
 
 Relative errors use RMS ground-truth magnitude. Long-horizon ground truths of contracting systems can approach zero: the detailed JSON also records absolute RMSE and normalization by initial-state RMS.
 
+## Follow-up: changing state distributions and forecast reliability
+
+The [study and implementation guide](../docs/nonstationary.md) explains the time-indexed singular bases, the statistical contract and when to pool transitions. All errors below are conditional-mean RMSE in each experiment's own units. The comparisons have different endpoints; compare only within a row.
+
+| Experiment | Finding | Evidence and boundary |
+|---|---|---|
+| Gaussian transitions with smooth drift, 30 seeds | Time-local 0.1371 → validation-selected partial pooling 0.1262 at three steps. Paired mean difference −0.01090, descriptive 95% seed-bootstrap interval [−0.01494, −0.00711]. | [Fixed design and result](gaussian-transport/README.md). A subsequent [time-neighbor smoother](gaussian-transport/smoothing.md) reached 0.1198 but did not beat global pooling on homogeneous controls. Affine model, no neural advantage. |
+| Finite chain and warped circle, five horizons | Under switching, adaptive pooling dropped RMSE 0.1579 → 0.0182 (chain) and 0.2549 → 0.0326 (circle), essentially matching time-specific EDMD. It preferred pooled forecasts under homogeneous transitions. | [Fresh-seed comparison](nonstationary/pooling.md); [bridge, rank and baseline ablations](nonstationary/README.md). Improvement over pooled EDMD certified in 27/50 switching seed–horizon cells, none over time EDMD. |
+| Small neural experiment, 32 states | Frozen 0.7061 → trained 0.2813 across three horizons. Full tabular EDMD: 0.0800. | [Neural ablation](neural-transport/results.md): three seeds and 64 updates per tiny fit. A gain over initialization, not over the strongest baseline. |
+| Known two-class predictive mode | On fresh seeds, two-means recalibration changed learned-neural RMSE 0.2761 → 0.0235; the equally recalibrated tabular model also obtained 0.0235. | [Exploratory class-structure ablation](neural-partition/results.md). The median rule was unstable. This gain exploits a true two-class structure deliberately built into the system. |
+| Choosing whether to discretize a mode | With 65,536 independent calibration starts, a conservative selector attained 0.0376 RMSE on the binary task (soft 0.0859, two-model oracle 0.0326); it retained the soft model on a four-level task, attaining 0.0995. With 1,024 starts it abstained on both tasks. | [Fresh structural-selection experiment](partition-selection/results.md). Tabular singular scores; no new neural training. Abstention deploys the prespecified soft fallback. |
+
+A [matched finite-support refinement](finite-support-selection/results.md) used fresh fitting seeds. At 8,192 calibration starts on the binary system, replacing the universal score range by the valid range over all 32 possible states increased certified hard-mode decisions from 0.5% to 31.2%; selected RMSE fell from 0.0846 to 0.0612 (oracle 0.0305). On the four-level task it identified harm more often, and both procedures retained the soft model. Both abstained at 1,024. This lever is available only with an independently justified global range; sample extrema are insufficient.
+
+![Time sharing in Gaussian dynamics and tolerance sensitivity of rank and horizon certification](nonstationary/study.svg)
+
+Left: three-step joint forward/reverse error across 30 fits. Right: post hoc sensitivity of the same simultaneous upper bounds on 30 fitted chain/circle families. With 4,096 calibration starts no model certified even one step at tolerance 0.15; all 30 certified all five at 0.30. An exact-risk oracle in the plotted menu often accepts far more than the finite-sample bound. Recreate the figure with `python scripts/plot_transport_results.py` after installing the plots extra. These experiments do not establish novelty, real-world transfer, or control guarantees.
+
 ## What the comparisons establish
 
 - The rank-three Markov model improves over the same untrained neural dictionary: one-step error averages 48.69% ± 3.20% before learning versus 34.81% ± 1.24% afterward. Its truncation reference is about 33.55% ± 0.00%; retaining rank four removes most of this compression error.

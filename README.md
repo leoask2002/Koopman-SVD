@@ -27,6 +27,11 @@ The default is **600 optimization steps per model**, four tiny synthetic cases p
 
 Start with the [results summary](reports/README.md) for the measured accuracy, negative results, and remaining scientific tests.
 
+For short, time-aligned stochastic trajectories, see the [nonstationary study](docs/nonstationary.md).
+It includes a two-sided singular-function estimator for time-varying laws, a bounded-observable
+risk certificate with rank and horizon selection, and separate experiments that isolate learning,
+pooling, and composition effects. Its risk bounds are for a specified observable and start law.
+
 Additional bounded checks:
 
 ```bash
